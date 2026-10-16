@@ -1,0 +1,2224 @@
+# ========================================================
+# PARCIAL 1 - BASES DE DATOS AVANZADAS
+# PROYECTO: COOPERATIVA UNIVERSITARIA DE AHORRO Y CRÉDITO EDUCATIVO
+# ========================================================
+  
+
+# NOTA DE EJECUCIÓN
+# Ejecutar este archivo en mongosh por bloques y en el orden indicado.
+# Si se ejecuta más de una vez, las inserciones iniciales y los índices únicos
+# pueden producir duplicados/errores; para repetir la práctica, usar una base
+# de datos vacía o limpiar los datos de prueba antes de volver a ejecutarla.
+# Las operaciones con startTransaction() requieren MongoDB en replica set.
+#
+# ========================================================
+# DATOS A INSERTAR
+# ========================================================
+use cooperativa_universitaria
+
+# --------------------------------------------------------
+# CREACIÓN DE COLECCIONES
+# --------------------------------------------------------
+
+db.createCollection("usuarios")
+db.createCollection("funcionarios")
+db.createCollection("ahorros")
+db.createCollection("movimientos_ahorro")
+db.createCollection("fines_educativos")
+db.createCollection("prestamos")
+db.createCollection("pagos_prestamo")
+db.createCollection("distribucion_intereses")
+
+# --------------------------------------------------------
+# ÍNDICES PARA EVITAR IDENTIFICADORES Y CORREOS DUPLICADOS
+# Ejecutar una sola vez. Si ya existen, no es necesario repetirlos.
+# --------------------------------------------------------
+
+db.usuarios.createIndex({ usuario_id: 1 }, { unique: true })
+db.usuarios.createIndex({ documento: 1 }, { unique: true })
+db.usuarios.createIndex({ email: 1 }, { unique: true })
+
+db.funcionarios.createIndex({ funcionario_id: 1 }, { unique: true })
+db.funcionarios.createIndex({ email: 1 }, { unique: true })
+
+db.ahorros.createIndex({ ahorro_id: 1 }, { unique: true })
+db.ahorros.createIndex({ usuario_id: 1 }, { unique: true })
+
+db.movimientos_ahorro.createIndex({ movimiento_id: 1 }, { unique: true })
+db.fines_educativos.createIndex({ fin_id: 1 }, { unique: true })
+db.prestamos.createIndex({ prestamo_id: 1 }, { unique: true })
+db.pagos_prestamo.createIndex({ pago_id: 1 }, { unique: true })
+db.distribucion_intereses.createIndex({ distribucion_id: 1 }, { unique: true })
+
+# --------------------------------------------------------
+# USUARIOS - 10 ESTUDIANTES
+# --------------------------------------------------------
+
+db.usuarios.insertMany([
+  {
+    usuario_id: "U001",
+    nombre: "Juan Carlos Muñoz",                      
+    documento: "1001001001",
+    telefono: "3001111001",
+    email: "juan.munoz@universidad.edu.co",
+    tipo: "estudiante",
+    estado: "activo"
+  },
+  {
+
+
+    usuario_id: "U002",
+    nombre: "María Fernanda López",
+    documento: "1001001002",
+    telefono: "3001111002",
+    email: "maria.lopez@universidad.edu.co",
+    tipo: "estudiante",
+    estado: "activo"
+  },
+  {
+    usuario_id: "U003",
+    nombre: "Carlos Andrés Gómez",
+    documento: "1001001003",
+    telefono: "3001111003",
+    email: "carlos.gomez@universidad.edu.co",
+    tipo: "estudiante",
+    estado: "activo"
+  },
+  {
+    usuario_id: "U004",
+    nombre: "Laura Daniela Rodríguez",
+    documento: "1001001004",
+    telefono: "3001111004",
+    email: "laura.rodriguez@universidad.edu.co",
+    tipo: "estudiante",
+    estado: "activo"
+  },
+  {
+    usuario_id: "U005",
+    nombre: "Andrés Felipe Torres",
+    documento: "1001001005",
+    telefono: "3001111005",
+    email: "andres.torres@universidad.edu.co",
+    tipo: "estudiante",
+    estado: "activo"
+  },
+  {
+    usuario_id: "U006",
+    nombre: "Sofía Valentina Herrera",
+    documento: "1001001006",
+    telefono: "3001111006",
+    email: "sofia.herrera@universidad.edu.co",
+    tipo: "estudiante",
+    estado: "activo"
+  },
+  {
+    usuario_id: "U007",
+    nombre: "Mateo Sebastián Castro",
+    documento: "1001001007",
+    telefono: "3001111007",
+    email: "mateo.castro@universidad.edu.co",
+    tipo: "estudiante",
+    estado: "activo"
+  },
+  {
+    usuario_id: "U008",
+    nombre: "Valentina Isabel Pérez",
+    documento: "1001001008",
+    telefono: "3001111008",
+    email: "valentina.perez@universidad.edu.co",
+    tipo: "estudiante",
+    estado: "activo"
+  },
+  {
+    usuario_id: "U009",
+    nombre: "Sebastián David Moreno",
+    documento: "1001001009",
+    telefono: "3001111009",
+    email: "sebastian.moreno@universidad.edu.co",
+    tipo: "estudiante",
+    estado: "activo"
+  },
+  {
+    usuario_id: "U010",
+    nombre: "Natalia Alejandra Vargas",
+    documento: "1001001010",
+    telefono: "3001111010",
+    email: "natalia.vargas@universidad.edu.co",
+    tipo: "estudiante",
+    estado: "activo"
+  }
+])
+
+# --------------------------------------------------------
+# RECTOR
+# --------------------------------------------------------
+
+db.usuarios.insertOne({
+  usuario_id: "U011",
+  nombre: "Ricardo Alberto Sánchez",
+  documento: "1001001011",
+  telefono: "3001111011",
+  email: "rector@universidad.edu.co",
+  tipo: "rector",
+  estado: "activo" 
+})
+
+# --------------------------------------------------------
+# FUNCIONARIOS
+# --------------------------------------------------------
+
+db.funcionarios.insertMany([
+  {
+    funcionario_id: "F001",
+    nombre: "Diana Marcela Rojas",
+    cargo: "Director financiero",
+    telefono: "3102001001",
+    email: "diana.rojas@universidad.edu.co",
+    estado: "activo"
+  },
+  {
+    funcionario_id: "F002",
+    nombre: "Jorge Enrique Martínez",
+    cargo: "Asesor de créditos",
+    telefono: "3102001002",
+    email: "jorge.martinez@universidad.edu.co",
+    estado: "activo"
+  },
+  {
+    funcionario_id: "F003",
+    nombre: "Paola Andrea Castillo",
+    cargo: "Tesorero",
+    telefono: "3102001003",
+    email: "paola.castillo@universidad.edu.co",
+    estado: "activo"
+  },
+  {
+    funcionario_id: "F004",
+    nombre: "Miguel Ángel Ramírez",
+    cargo: "Auxiliar administrativo",
+    telefono: "3102001004",
+    email: "miguel.ramirez@universidad.edu.co",
+    estado: "activo"
+  },
+  {
+    funcionario_id: "F005",
+    nombre: "Camila Andrea Suárez",
+    cargo: "Analista financiero",
+    telefono: "3102001005",
+    email: "camila.suarez@universidad.edu.co",
+    estado: "activo"
+  }
+])
+
+# --------------------------------------------------------
+# CUENTAS DE AHORRO - 10 CUENTAS
+# Los saldos representan los ahorros actuales.
+# --------------------------------------------------------
+
+db.ahorros.insertMany([
+  { ahorro_id: "A001", usuario_id: "U001", saldo: 2000000, estado: "activo" },
+  { ahorro_id: "A002", usuario_id: "U002", saldo: 3000000, estado: "activo" },
+  { ahorro_id: "A003", usuario_id: "U003", saldo: 5000000, estado: "activo" },
+  { ahorro_id: "A004", usuario_id: "U004", saldo: 1500000, estado: "activo" },
+  { ahorro_id: "A005", usuario_id: "U005", saldo: 2500000, estado: "activo" },
+  { ahorro_id: "A006", usuario_id: "U006", saldo: 1000000, estado: "activo" },
+  { ahorro_id: "A007", usuario_id: "U007", saldo: 3500000, estado: "activo" },
+  { ahorro_id: "A008", usuario_id: "U008", saldo: 4500000, estado: "activo" },
+  { ahorro_id: "A009", usuario_id: "U009", saldo: 1800000, estado: "activo" },
+  { ahorro_id: "A010", usuario_id: "U010", saldo: 2200000, estado: "activo" }
+])
+
+# Total inicial ahorrado:
+# $27.000.000
+
+# --------------------------------------------------------
+# MOVIMIENTOS DE AHORRO
+# Estos movimientos son el historial.
+# --------------------------------------------------------
+
+db.movimientos_ahorro.insertMany([
+  {
+    movimiento_id: "M001",
+    ahorro_id: "A001",
+    usuario_id: "U001",
+    tipo: "deposito",
+    valor: 2000000,
+    fecha: ISODate("2026-01-10T10:00:00Z"),
+    descripcion: "Ahorro inicial"
+  },
+  {
+    movimiento_id: "M002",
+    ahorro_id: "A002",
+    usuario_id: "U002",
+    tipo: "deposito",
+    valor: 3500000,
+    fecha: ISODate("2026-01-11T10:00:00Z"),
+    descripcion: "Ahorro inicial"
+  },
+  {
+    movimiento_id: "M003",
+    ahorro_id: "A002",
+    usuario_id: "U002",
+    tipo: "retiro",
+    valor: 500000,
+    fecha: ISODate("2026-02-15T10:00:00Z"),
+    descripcion: "Retiro autorizado"
+  },
+  {
+    movimiento_id: "M004",
+    ahorro_id: "A003",
+    usuario_id: "U003",
+    tipo: "deposito",
+    valor: 5000000,
+    fecha: ISODate("2026-01-12T10:00:00Z"),
+    descripcion: "Ahorro inicial"
+  },
+  {
+    movimiento_id: "M005",
+    ahorro_id: "A004",
+    usuario_id: "U004",
+    tipo: "deposito",
+    valor: 1500000,
+    fecha: ISODate("2026-01-13T10:00:00Z"),
+    descripcion: "Ahorro inicial"
+  },
+  {
+    movimiento_id: "M006",
+    ahorro_id: "A005",
+    usuario_id: "U005",
+    tipo: "deposito",
+    valor: 2500000,
+    fecha: ISODate("2026-01-14T10:00:00Z"),
+    descripcion: "Ahorro inicial"
+  },
+  {
+    movimiento_id: "M007",
+    ahorro_id: "A006",
+    usuario_id: "U006",
+    tipo: "deposito",
+    valor: 1000000,
+    fecha: ISODate("2026-01-15T10:00:00Z"),
+    descripcion: "Ahorro inicial"
+  },
+  {
+    movimiento_id: "M008",
+    ahorro_id: "A007",
+    usuario_id: "U007",
+    tipo: "deposito",
+    valor: 3500000,
+    fecha: ISODate("2026-01-16T10:00:00Z"),
+    descripcion: "Ahorro inicial"
+  },
+  {
+    movimiento_id: "M009",
+    ahorro_id: "A008",
+    usuario_id: "U008",
+    tipo: "deposito",
+    valor: 4500000,
+    fecha: ISODate("2026-01-17T10:00:00Z"),
+    descripcion: "Ahorro inicial"
+  },
+  {
+    movimiento_id: "M010",
+    ahorro_id: "A009",
+    usuario_id: "U009",
+    tipo: "deposito",
+    valor: 1800000,
+    fecha: ISODate("2026-01-18T10:00:00Z"),
+    descripcion: "Ahorro inicial"
+  },
+  {
+    movimiento_id: "M011",
+    ahorro_id: "A010",
+    usuario_id: "U010",
+    tipo: "deposito",
+    valor: 2200000,
+    fecha: ISODate("2026-01-19T10:00:00Z"),
+    descripcion: "Ahorro inicial"
+  },
+  {
+    movimiento_id: "M012",
+    ahorro_id: "A001",
+    usuario_id: "U001",
+    tipo: "deposito",
+    valor: 250000,
+    fecha: ISODate("2026-03-01T10:00:00Z"),
+    descripcion: "Aporte adicional"
+  },
+  {
+    movimiento_id: "M013",
+    ahorro_id: "A001",
+    usuario_id: "U001",
+    tipo: "retiro",
+    valor: 250000,
+    fecha: ISODate("2026-03-10T10:00:00Z"),
+    descripcion: "Retiro autorizado"
+  }
+])
+
+# --------------------------------------------------------
+# FINES EDUCATIVOS
+# --------------------------------------------------------
+
+db.fines_educativos.insertMany([
+  {
+    fin_id: "FE001",
+    nombre: "Pago de matrícula",
+    descripcion: "Pago de matrícula universitaria",
+    estado: "activo"
+  },
+  {
+    fin_id: "FE002",
+    nombre: "Pago de semestre",
+    descripcion: "Pago de semestre académico",
+    estado: "activo"
+  },
+  {
+    fin_id: "FE003",
+    nombre: "Compra de computador",
+    descripcion: "Compra de computador para actividades académicas",
+    estado: "activo"
+  },
+  {
+    fin_id: "FE004",
+    nombre: "Compra de libros",
+    descripcion: "Compra de libros y textos académicos",
+    estado: "activo"
+  },
+  {
+    fin_id: "FE005",
+    nombre: "Material académico",
+    descripcion: "Compra de materiales necesarios para estudiar",
+    estado: "activo"
+  },
+  {
+    fin_id: "FE006",
+    nombre: "Cursos",
+    descripcion: "Pago de cursos relacionados con la formación",
+    estado: "activo"
+  },
+  {
+    fin_id: "FE007",
+    nombre: "Certificaciones",
+    descripcion: "Pago de certificaciones académicas o profesionales",
+    estado: "activo"
+  },
+  {
+    fin_id: "FE008",
+    nombre: "Transporte universitario",
+    descripcion: "Transporte relacionado con actividades universitarias",
+    estado: "activo"
+  },
+  {
+    fin_id: "FE009",
+    nombre: "Otros gastos educativos",
+    descripcion: "Otros gastos directamente relacionados con la educación",
+    estado: "activo"
+  }
+])
+
+# --------------------------------------------------------
+# PRÉSTAMOS
+#
+# Los préstamos P001-P008 tienen los siguientes valores:
+# P001: 1.000.000 -> 50.000 de interés
+# P002: 2.000.000 -> 100.000 de interés
+# P003: 3.000.000 -> 150.000 de interés
+# P004: 5.000.000 -> 250.000 de interés
+# P005: 1.500.000 -> 75.000 de interés
+# P006: 500.000 -> 25.000 de interés
+# P007: 800.000 -> 40.000 de interés
+# P008: 3.000.000 -> 150.000 de interés
+# --------------------------------------------------------
+
+db.prestamos.insertMany([
+  {
+    prestamo_id: "P001",
+    usuario_id: "U001",
+    fin_id: "FE001",
+    capital_inicial: 1000000,
+    interes_inicial: 50000,
+    capital_pendiente: 1000000,
+    interes_pendiente: 50000,
+    tasa_interes: 0.05,
+    estado: "activo",
+    fecha_solicitud: ISODate("2026-02-01T10:00:00Z")
+  },
+  {
+    prestamo_id: "P002",
+    usuario_id: "U002",
+    fin_id: "FE003",
+    capital_inicial: 2000000,
+    interes_inicial: 100000,
+    capital_pendiente: 2000000,
+    interes_pendiente: 100000,
+    tasa_interes: 0.05,
+    estado: "activo",
+    fecha_solicitud: ISODate("2026-02-02T10:00:00Z")
+  },
+  {
+    prestamo_id: "P003",
+    usuario_id: "U003",
+    fin_id: "FE004",
+    capital_inicial: 3000000,
+    interes_inicial: 150000,
+    capital_pendiente: 3000000,
+    interes_pendiente: 150000,
+    tasa_interes: 0.05,
+    estado: "activo",
+    fecha_solicitud: ISODate("2026-02-03T10:00:00Z")
+  },
+  {
+    prestamo_id: "P004",
+    usuario_id: "U004",
+    fin_id: "FE002",
+    capital_inicial: 5000000,
+    interes_inicial: 250000,
+    capital_pendiente: 3000000,
+    interes_pendiente: 150000,
+    tasa_interes: 0.05,
+    estado: "activo",
+    fecha_solicitud: ISODate("2026-02-04T10:00:00Z")
+  },
+  {
+    prestamo_id: "P005",
+    usuario_id: "U005",
+    fin_id: "FE006",
+    capital_inicial: 1500000,
+    interes_inicial: 75000,
+    capital_pendiente: 1500000,
+    interes_pendiente: 75000,
+    tasa_interes: 0.05,
+    estado: "activo",
+    fecha_solicitud: ISODate("2026-02-05T10:00:00Z")
+  },
+  {
+    prestamo_id: "P006",
+    usuario_id: "U006",
+    fin_id: "FE005",
+    capital_inicial: 500000,
+    interes_inicial: 25000,
+    capital_pendiente: 500000,
+    interes_pendiente: 15000,
+    tasa_interes: 0.05,
+    estado: "activo",
+    fecha_solicitud: ISODate("2026-02-06T10:00:00Z")
+  },
+  {
+    prestamo_id: "P007",
+    usuario_id: "U007",
+    fin_id: "FE007",
+    capital_inicial: 800000,
+    interes_inicial: 40000,
+    capital_pendiente: 0,
+    interes_pendiente: 0,
+    tasa_interes: 0.05,
+    estado: "pagado",
+    fecha_solicitud: ISODate("2026-02-07T10:00:00Z")
+  },
+  {
+    prestamo_id: "P008",
+    usuario_id: "U008",
+    fin_id: "FE008",
+    capital_inicial: 3000000,
+    interes_inicial: 150000,
+    capital_pendiente: 3000000,
+    interes_pendiente: 150000,
+    tasa_interes: 0.05,
+    estado: "activo",
+    fecha_solicitud: ISODate("2026-02-08T10:00:00Z")
+  }
+])
+
+# --------------------------------------------------------
+# PAGOS DE PRÉSTAMOS
+# --------------------------------------------------------
+
+db.pagos_prestamo.insertMany([
+  {
+    pago_id: "PG001",
+    prestamo_id: "P001",
+    usuario_id: "U001",
+    tipo_abono: "interes",
+    valor: 20000,
+    fecha: ISODate("2026-03-01T10:00:00Z")
+  },
+  {
+    pago_id: "PG002",
+    prestamo_id: "P004",
+    usuario_id: "U004",
+    tipo_abono: "capital",
+    valor: 2000000,
+    fecha: ISODate("2026-03-02T10:00:00Z")
+  },
+  {
+    pago_id: "PG003",
+    prestamo_id: "P007",
+    usuario_id: "U007",
+    tipo_abono: "capital",
+    valor: 800000,
+    fecha: ISODate("2026-03-03T10:00:00Z")
+  }
+])
+
+# --------------------------------------------------------
+# DISTRIBUCIÓN DE INTERESES
+#
+# En este ejemplo se distribuirán $500.000.
+# Total ahorrado = $27.000.000.
+# --------------------------------------------------------
+
+db.distribucion_intereses.insertMany([
+  {
+    distribucion_id: "DI001",
+    periodo: "2026-03",
+    usuario_id: "U001",
+    ahorro_id: "A001",
+    ahorro_base: 2000000,
+    total_ahorrado: 27000000,
+    intereses_generados: 500000,
+    participacion: 0.0740740741,
+    interes_recibido: 37037.04
+  },
+  {
+    distribucion_id: "DI002",
+    periodo: "2026-03",
+    usuario_id: "U002",
+    ahorro_id: "A002",
+    ahorro_base: 3000000,
+    total_ahorrado: 27000000,
+    intereses_generados: 500000,
+    participacion: 0.1111111111,
+    interes_recibido: 55555.56
+  },
+  {
+    distribucion_id: "DI003",
+    periodo: "2026-03",
+    usuario_id: "U003",
+    ahorro_id: "A003",
+    ahorro_base: 5000000,
+    total_ahorrado: 27000000,
+    intereses_generados: 500000,
+    participacion: 0.1851851852,
+    interes_recibido: 92592.59
+  },
+  {
+    distribucion_id: "DI004",
+    periodo: "2026-03",
+    usuario_id: "U004",
+    ahorro_id: "A004",
+    ahorro_base: 1500000,
+    total_ahorrado: 27000000,
+    intereses_generados: 500000,
+    participacion: 0.0555555556,
+    interes_recibido: 27777.78
+  },
+  {
+    distribucion_id: "DI005",
+    periodo: "2026-03",
+    usuario_id: "U005",
+    ahorro_id: "A005",
+    ahorro_base: 2500000,
+    total_ahorrado: 27000000,
+    intereses_generados: 500000,
+    participacion: 0.0925925926,
+    interes_recibido: 46296.30
+  },
+  {
+    distribucion_id: "DI006",
+    periodo: "2026-03",
+    usuario_id: "U006",
+    ahorro_id: "A006",
+    total_ahorrado: 27000000,
+    intereses_generados: 500000,
+    ahorro_base: 1000000,
+    participacion: 0.0370370370,
+    interes_recibido: 18518.52
+  },
+  {
+    distribucion_id: "DI007",
+    periodo: "2026-03",
+    usuario_id: "U007",
+    ahorro_id: "A007",
+    ahorro_base: 3500000,
+    total_ahorrado: 27000000,
+    intereses_generados: 500000,
+    participacion: 0.1296296296,
+    interes_recibido: 64814.81
+  },
+  {
+    distribucion_id: "DI008",
+    periodo: "2026-03",
+    usuario_id: "U008",
+    ahorro_id: "A008",
+    ahorro_base: 4500000,
+    total_ahorrado: 27000000,
+    intereses_generados: 500000,
+    participacion: 0.1666666667,
+    interes_recibido: 83333.33
+  },
+  {
+    distribucion_id: "DI009",
+    periodo: "2026-03",
+    usuario_id: "U009",
+    ahorro_id: "A009",
+    ahorro_base: 1800000,
+    total_ahorrado: 27000000,
+    intereses_generados: 500000,
+    participacion: 0.0666666667,
+    interes_recibido: 33333.33
+  },
+  {
+    distribucion_id: "DI010",
+    periodo: "2026-03",
+    usuario_id: "U010",
+    ahorro_id: "A010",
+    ahorro_base: 2200000,
+    total_ahorrado: 27000000,
+    intereses_generados: 500000,
+    participacion: 0.0814814815,
+    interes_recibido: 40740.74
+  }
+])
+
+# ========================================================
+# COLECCIONES EN TOTAL
+# ========================================================
+
+# 1. usuarios
+# Guarda estudiantes y el rector.
+
+# 2. funcionarios
+# Guarda los funcionarios que apoyan la administración.
+
+# 3. ahorros
+# Guarda una cuenta de ahorro por estudiante y su saldo actual.
+
+# 4. movimientos_ahorro
+# Guarda depósitos y retiros realizados sobre las cuentas.
+
+# 5. fines_educativos
+# Contiene las finalidades válidas para solicitar préstamos.
+
+# 6. prestamos
+# Guarda préstamos, capital, intereses, tasa y estado.
+
+# 7. pagos_prestamo
+# Guarda el historial de pagos y si cada pago fue a capital o interés.
+
+# 8. distribucion_intereses
+# Guarda el resultado de la distribución proporcional de intereses.
+
+# ========================================================
+# PARCIAL 1 - BASES DE DATOS AVANZADAS
+# HISTORIA DE USUARIO 1
+# ========================================================
+
+# Enunciado:
+# Como administrador quiero registrar un estudiante y consultar sus datos
+# para permitirle utilizar los servicios de ahorro y crédito educativo.
+
+# Los índices únicos creados al inicio impiden repetir usuario_id,
+# documento o email. Se consulta primero para evitar duplicar el registro.
+
+const estudianteExistenteHU1 = db.usuarios.findOne({
+  $or: [
+    { usuario_id: "U012" },
+    { documento: "1001001012" },
+    { email: "daniel.molina@universidad.edu.co" }
+  ]
+})
+
+if (!estudianteExistenteHU1) {
+  db.usuarios.insertOne({
+    usuario_id: "U012",
+    nombre: "Daniel Esteban Molina",
+    documento: "1001001012",
+    telefono: "3001111012",
+    email: "daniel.molina@universidad.edu.co",
+    tipo: "estudiante",
+    estado: "activo"
+  })
+  print("Estudiante registrado correctamente.")
+} else {
+  print("No se registró: el ID, documento o correo ya existe.")
+}
+
+# Consultar los estudiantes registrados:
+
+db.usuarios.find(
+  { tipo: "estudiante" },
+  { _id: 0, usuario_id: 1, nombre: 1, documento: 1, telefono: 1, email: 1, estado: 1 }
+)
+
+# Explicación:
+# No se almacena ninguna contraseña en texto plano en esta colección.
+# En una aplicación real, la autenticación y el hash de contraseña deben
+# gestionarse en el backend. Los índices únicos son la protección final
+# frente a registros duplicados, incluso si dos solicitudes llegan a la vez.
+
+# ========================================================
+# HISTORIA DE USUARIO 2
+# ========================================================
+
+# Enunciado:
+# Como Rector quiero registrar funcionarios con diferentes cargos para
+# delegar actividades administrativas de la cooperativa.
+
+# Valores permitidos para estado: activo, inactivo.
+# El correo debe ser único por el índice creado al inicio.
+
+const funcionarioNuevoHU2 = {
+  funcionario_id: "F006",
+  nombre: "Natalia Marcela Gómez",
+  cargo: "Coordinador de cartera",
+  telefono: "3102001006",
+  email: "natalia.gomez@universidad.edu.co",
+  estado: "activo"
+}
+
+const cargosPermitidosHU2 = [
+  "Director financiero",
+  "Asesor de créditos",
+  "Tesorero",
+  "Auxiliar administrativo",
+  "Analista financiero",
+  "Coordinador de cartera"
+]
+
+const funcionarioDuplicadoHU2 = db.funcionarios.findOne({
+  $or: [
+    { funcionario_id: funcionarioNuevoHU2.funcionario_id },
+    { email: funcionarioNuevoHU2.email }
+  ]
+})
+
+if (
+  !funcionarioDuplicadoHU2 &&
+  funcionarioNuevoHU2.nombre.trim() !== "" &&
+  funcionarioNuevoHU2.email.includes("@") &&
+  ["activo", "inactivo"].includes(funcionarioNuevoHU2.estado) &&
+  cargosPermitidosHU2.includes(funcionarioNuevoHU2.cargo)
+) {
+  db.funcionarios.insertOne(funcionarioNuevoHU2)
+  print("Funcionario registrado correctamente.")
+} else {
+  print("Registro rechazado: datos inválidos, cargo no permitido o ID/correo duplicado.")
+}
+
+# Consultar todos los funcionarios:
+
+db.funcionarios.find(
+  {},
+  { _id: 0, funcionario_id: 1, nombre: 1, cargo: 1, telefono: 1, email: 1, estado: 1 }
+)
+
+# Explicación:
+# Se validan campos obligatorios, estado, cargo e identificación/correo duplicados.
+# El índice único de email también evita duplicados a nivel de base de datos.
+
+# ========================================================
+# HISTORIA DE USUARIO 3
+# ========================================================
+
+# Enunciado:
+# Como estudiante quiero abrir una cuenta de ahorro para depositar y
+# administrar mi dinero dentro de la cooperativa.
+
+# Código:
+# Primero se verifica que el estudiante exista.
+
+db.usuarios.findOne({
+  usuario_id: "U012",
+  tipo: "estudiante",
+  estado: "activo"
+})
+
+# Si la consulta anterior devuelve al estudiante, se puede crear su cuenta:
+
+db.ahorros.insertOne({
+  ahorro_id: "A011",
+  usuario_id: "U012",
+  saldo: 0,
+  estado: "activo"
+})
+
+# Consultar la cuenta creada:
+
+db.ahorros.findOne(
+  { ahorro_id: "A011" },
+  { _id: 0 }
+)
+
+# Explicación:
+# La cuenta se relaciona con el estudiante mediante usuario_id.
+# Se inicia con saldo cero y posteriormente se pueden registrar depósitos.
+
+# ========================================================
+# HISTORIA DE USUARIO 4
+# ========================================================
+
+# Enunciado:
+# Como estudiante quiero realizar depósitos o retiros para mantener
+# actualizado mi saldo de ahorro y consultar los movimientos.
+
+# IMPORTANTE:
+# Las transacciones requieren MongoDB ejecutándose como replica set.
+# En MongoDB Compass puede usarse una conexión a un replica set local.
+# Se actualiza el saldo y se registra el movimiento en una misma transacción.
+
+# --------------------------------------------------------
+# DEPÓSITO TRANSACCIONAL
+# --------------------------------------------------------
+
+const sesionDepositoHU4 = db.getMongo().startSession()
+const dbDepositoHU4 = sesionDepositoHU4.getDatabase("cooperativa_universitaria")
+
+try {
+  sesionDepositoHU4.startTransaction()
+
+  const cuentaDepositoHU4 = dbDepositoHU4.ahorros.updateOne(
+    {
+      ahorro_id: "A011",
+      usuario_id: "U012",
+      estado: "activo"
+    },
+    { $inc: { saldo: 300000 } }
+  )
+
+  if (cuentaDepositoHU4.modifiedCount !== 1) {
+    throw new Error("La cuenta no existe, no está activa o no pudo actualizarse.")
+  }
+
+  dbDepositoHU4.movimientos_ahorro.insertOne({
+    movimiento_id: "M014",
+    ahorro_id: "A011",
+    usuario_id: "U012",
+    tipo: "deposito",
+    valor: 300000,
+    fecha: ISODate("2026-03-15T10:00:00Z"),
+    descripcion: "Depósito realizado por el estudiante"
+  })
+
+  sesionDepositoHU4.commitTransaction()
+  print("Depósito y movimiento registrados correctamente.")
+} catch (error) {
+  sesionDepositoHU4.abortTransaction()
+  print("Depósito cancelado: " + error.message)
+} finally {
+  sesionDepositoHU4.endSession()
+}
+
+# --------------------------------------------------------
+# RETIRO TRANSACCIONAL
+# --------------------------------------------------------
+
+const sesionRetiroHU4 = db.getMongo().startSession()
+const dbRetiroHU4 = sesionRetiroHU4.getDatabase("cooperativa_universitaria")
+
+try {
+  sesionRetiroHU4.startTransaction()
+
+  const resultadoRetiroHU4 = dbRetiroHU4.ahorros.updateOne(
+    {
+      ahorro_id: "A011",
+      usuario_id: "U012",
+      estado: "activo",
+      saldo: { $gte: 100000 }
+    },
+    { $inc: { saldo: -100000 } }
+  )
+
+  if (resultadoRetiroHU4.modifiedCount !== 1) {
+    throw new Error("Saldo insuficiente o cuenta no disponible.")
+  }
+
+  dbRetiroHU4.movimientos_ahorro.insertOne({
+    movimiento_id: "M015",
+    ahorro_id: "A011",
+    usuario_id: "U012",
+    tipo: "retiro",
+    valor: 100000,
+    fecha: ISODate("2026-03-16T10:00:00Z"),
+    descripcion: "Retiro autorizado"
+  })
+
+  sesionRetiroHU4.commitTransaction()
+  print("Retiro y movimiento registrados correctamente.")
+} catch (error) {
+  sesionRetiroHU4.abortTransaction()
+  print("Retiro cancelado: " + error.message)
+} finally {
+  sesionRetiroHU4.endSession()
+}
+
+# Consultar saldo:
+
+db.ahorros.findOne(
+  { ahorro_id: "A011" },
+  { _id: 0, ahorro_id: 1, usuario_id: 1, saldo: 1 }
+)
+
+# El saldo esperado después de un depósito de $300.000 y un retiro de
+# $100.000 es $200.000, suponiendo que la cuenta inició con saldo cero.
+
+# Explicación:
+# $inc aumenta o disminuye el saldo. $gte evita retirar más de lo disponible.
+# La transacción garantiza que saldo y movimiento se confirmen juntos o
+# que ambos cambios se deshagan si ocurre un error.
+
+# ========================================================
+# HISTORIA DE USUARIO 5
+# ========================================================
+
+# Enunciado:
+# Como estudiante quiero solicitar un préstamo indicando su finalidad
+# educativa para obtener financiación destinada exclusivamente a mis estudios.
+
+# Reglas aplicadas en este ejemplo:
+# - El estudiante debe existir y estar activo.
+# - La finalidad educativa debe existir y estar activa.
+# - El monto debe ser mayor que cero y no superar el límite de ejemplo de $5.000.000.
+# - No debe existir otro préstamo activo para este estudiante.
+# - La tasa fija es del 5 %.
+# Nota: el límite y la regla de un préstamo activo son reglas de ejemplo
+# y deben ajustarse si el reglamento real de la cooperativa indica otra cosa.
+
+const usuarioSolicitudHU5 = db.usuarios.findOne({
+  usuario_id: "U009",
+  tipo: "estudiante",
+  estado: "activo"
+})
+
+const finalidadSolicitudHU5 = db.fines_educativos.findOne({
+  fin_id: "FE009",
+  estado: "activo"
+})
+
+const montoSolicitudHU5 = 1000000
+const limiteSolicitudHU5 = 5000000
+const prestamoActivoHU5 = db.prestamos.findOne({
+  usuario_id: "U009",
+  estado: "activo"
+})
+
+if (
+  usuarioSolicitudHU5 &&
+  finalidadSolicitudHU5 &&
+  montoSolicitudHU5 > 0 &&
+  montoSolicitudHU5 <= limiteSolicitudHU5 &&
+  !prestamoActivoHU5
+) {
+  const interesSolicitudHU5 = montoSolicitudHU5 * 0.05
+
+  db.prestamos.insertOne({
+    prestamo_id: "P009",
+    usuario_id: "U009",
+    fin_id: "FE009",
+    capital_inicial: montoSolicitudHU5,
+    interes_inicial: interesSolicitudHU5,
+    capital_pendiente: montoSolicitudHU5,
+    interes_pendiente: interesSolicitudHU5,
+    tasa_interes: 0.05,
+    estado: "activo",
+    fecha_solicitud: ISODate("2026-03-17T10:00:00Z")
+  })
+
+  print("Préstamo registrado. Interés inicial: $" + interesSolicitudHU5)
+} else {
+  print("Préstamo rechazado: estudiante, finalidad, monto o estado de préstamos no válido.")
+}
+
+# Consultar el préstamo:
+
+db.prestamos.findOne(
+  { prestamo_id: "P009" },
+  { _id: 0 }
+)
+
+# Verificar que no existan préstamos con monto inválido:
+
+db.prestamos.find({
+  $or: [
+    { capital_inicial: { $lte: 0 } },
+    { capital_pendiente: { $lt: 0 } },
+    { interes_pendiente: { $lt: 0 } }
+  ]
+})
+
+# Explicación:
+# El interés inicial se calcula como capital * 0.05.
+# Se validan el estudiante, la finalidad, el monto, el límite de ejemplo y
+# la existencia de préstamos activos antes de insertar el nuevo préstamo.
+
+# ========================================================
+# HISTORIA DE USUARIO 6
+# ========================================================
+
+# Enunciado:
+# Como funcionario quiero calcular el interés del préstamo aplicando una
+# tasa del 5 % para conocer el valor total que debe pagar el estudiante.
+
+# Código:
+
+db.prestamos.aggregate([
+  {
+    $match: {
+      prestamo_id: "P003"
+    }
+  },
+  {
+    $set: {
+      interes_calculado: {
+        $multiply: ["$capital_inicial", 0.05]
+      }
+    }
+  },
+  {
+    $set: {
+      total_calculado: {
+        $add: ["$capital_inicial", "$interes_calculado"]
+      }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      prestamo_id: 1,
+      capital_inicial: 1,
+      interes_calculado: 1,
+      total_calculado: 1
+    }
+  }
+])
+
+# Resultado esperado para P003:
+#
+# capital_inicial = 3.000.000
+# interés = 3.000.000 * 0.05 = 150.000
+# total = 3.000.000 + 150.000 = 3.150.000
+
+# También se puede consultar el cálculo para todos los préstamos:
+
+db.prestamos.aggregate([
+  {
+    $match: {
+      estado: "activo"
+    }
+  },
+  {
+    $set: {
+      interes_calculado: {
+        $multiply: ["$capital_pendiente", 0.05]
+      }
+    }
+  },
+  {
+    $set: {
+      total_pendiente_calculado: {
+        $add: ["$capital_pendiente", "$interes_calculado"]
+      }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      prestamo_id: 1,
+      usuario_id: 1,
+      capital_pendiente: 1,
+      interes_calculado: 1,
+      total_pendiente_calculado: 1
+    }
+  }
+])
+
+# Explicación:
+# $multiply calcula el 5 % del capital.
+# $add suma capital e interés para obtener el total.
+
+# ========================================================
+# HISTORIA DE USUARIO 7
+# ========================================================
+
+# Enunciado:
+# Como estudiante quiero consultar mis préstamos y saldos pendientes
+# para conocer cuánto capital e interés debo.
+
+# --------------------------------------------------------
+# TODOS LOS PRÉSTAMOS DEL ESTUDIANTE U003
+# --------------------------------------------------------
+
+db.prestamos.find(
+  { usuario_id: "U003" },
+  {
+    _id: 0,
+    prestamo_id: 1,
+    fin_id: 1,
+    capital_pendiente: 1,
+    interes_pendiente: 1,
+    estado: 1
+  }
+)
+
+# --------------------------------------------------------
+# PRÉSTAMOS ACTIVOS
+# --------------------------------------------------------
+
+db.prestamos.find(
+  {
+    usuario_id: "U003",
+    estado: "activo"
+  },
+  {
+    _id: 0,
+    prestamo_id: 1,
+    capital_pendiente: 1,
+    interes_pendiente: 1,
+    estado: 1
+  }
+)
+
+# --------------------------------------------------------
+# CONSULTA CON INFORMACIÓN DEL FIN EDUCATIVO
+# --------------------------------------------------------
+
+db.prestamos.aggregate([
+  {
+    $match: {
+      usuario_id: "U003"
+    }
+  },
+  {
+    $lookup: {
+      from: "fines_educativos",
+      localField: "fin_id",
+      foreignField: "fin_id",
+      as: "finalidad"
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      prestamo_id: 1,
+      capital_pendiente: 1,
+      interes_pendiente: 1,
+      estado: 1,
+      finalidad: {
+        $arrayElemAt: ["$finalidad.nombre", 0]
+      }
+    }
+  }
+])
+
+# Explicación:
+# find() permite consultar los préstamos de un estudiante.
+# $lookup relaciona cada préstamo con su finalidad educativa.
+
+# ========================================================
+# HISTORIA DE USUARIO 8
+# ========================================================
+
+# Enunciado:
+# Como estudiante quiero realizar un pago y seleccionar si deseo abonarlo
+# al capital o al interés para controlar la forma en que disminuye mi deuda.
+
+# IMPORTANTE:
+# Este ejemplo utiliza transacciones, por lo que MongoDB debe ejecutarse
+# como replica set. El pago y la actualización del préstamo se confirman juntos.
+
+# ========================================================
+# EJEMPLO TRANSACCIONAL DE ABONO AL CAPITAL
+# ========================================================
+
+# Préstamo P003:
+# Capital pendiente inicial = $3.000.000
+# Abono a capital = $1.000.000
+# Nuevo capital = $2.000.000
+# Nuevo interés pendiente = $2.000.000 * 0.05 = $100.000
+
+const sesionCapitalHU8 = db.getMongo().startSession()
+const dbCapitalHU8 = sesionCapitalHU8.getDatabase("cooperativa_universitaria")
+
+try {
+  sesionCapitalHU8.startTransaction()
+
+  const prestamoCapitalHU8 = dbCapitalHU8.prestamos.findOne({
+    prestamo_id: "P003",
+    estado: "activo",
+    capital_pendiente: { $gte: 1000000 }
+  })
+
+  if (!prestamoCapitalHU8) {
+    throw new Error("Préstamo inexistente/inactivo o abono mayor al capital pendiente.")
+  }
+
+  const capitalNuevoHU8 = prestamoCapitalHU8.capital_pendiente - 1000000
+  const interesNuevoHU8 = capitalNuevoHU8 * prestamoCapitalHU8.tasa_interes
+
+  const actualizacionCapitalHU8 = dbCapitalHU8.prestamos.updateOne(
+    {
+      prestamo_id: "P003",
+      estado: "activo",
+      capital_pendiente: { $gte: 1000000 }
+    },
+    [
+      {
+        $set: {
+          capital_pendiente: { $subtract: ["$capital_pendiente", 1000000] }
+        }
+      },
+      {
+        $set: {
+          interes_pendiente: {
+            $multiply: ["$capital_pendiente", "$tasa_interes"]
+          }
+        }
+      },
+      {
+        $set: {
+          estado: {
+            $cond: [
+              {
+                $and: [
+                  { $eq: ["$capital_pendiente", 0] },
+                  { $eq: ["$interes_pendiente", 0] }
+                ]
+              },
+              "pagado",
+              "activo"
+            ]
+          }
+        }
+      }
+    ]
+  )
+
+  if (actualizacionCapitalHU8.modifiedCount !== 1) {
+    throw new Error("No se pudo actualizar el préstamo.")
+  }
+
+  dbCapitalHU8.pagos_prestamo.insertOne({
+    pago_id: "PG004",
+    prestamo_id: "P003",
+    usuario_id: prestamoCapitalHU8.usuario_id,
+    tipo_abono: "capital",
+    valor: 1000000,
+    fecha: ISODate("2026-03-18T10:00:00Z")
+  })
+
+  sesionCapitalHU8.commitTransaction()
+  print("Abono a capital registrado correctamente.")
+} catch (error) {
+  sesionCapitalHU8.abortTransaction()
+  print("Abono a capital cancelado: " + error.message)
+} finally {
+  sesionCapitalHU8.endSession()
+}
+
+db.prestamos.findOne(
+  { prestamo_id: "P003" },
+  { _id: 0, prestamo_id: 1, capital_pendiente: 1, interes_pendiente: 1, estado: 1 }
+)
+
+# Resultado esperado si P003 tenía $3.000.000 de capital y tasa 0.05:
+# capital_pendiente = 2.000.000
+# interes_pendiente = 100.000
+
+# ========================================================
+# EJEMPLO TRANSACCIONAL DE ABONO AL INTERÉS
+# ========================================================
+
+# Para P008, se abonan $50.000 de interés.
+# El capital no cambia y el interés pendiente disminuye.
+
+const sesionInteresHU8 = db.getMongo().startSession()
+const dbInteresHU8 = sesionInteresHU8.getDatabase("cooperativa_universitaria")
+
+try {
+  sesionInteresHU8.startTransaction()
+
+  const prestamoInteresHU8 = dbInteresHU8.prestamos.findOne({
+    prestamo_id: "P008",
+    estado: "activo",
+    interes_pendiente: { $gte: 50000 }
+  })
+
+  if (!prestamoInteresHU8) {
+    throw new Error("Préstamo inexistente/inactivo o pago mayor al interés pendiente.")
+  }
+
+  const actualizacionInteresHU8 = dbInteresHU8.prestamos.updateOne(
+    {
+      prestamo_id: "P008",
+      estado: "activo",
+      interes_pendiente: { $gte: 50000 }
+    },
+    { $inc: { interes_pendiente: -50000 } }
+  )
+
+  if (actualizacionInteresHU8.modifiedCount !== 1) {
+    throw new Error("No se pudo actualizar el interés pendiente.")
+  }
+
+  dbInteresHU8.pagos_prestamo.insertOne({
+    pago_id: "PG005",
+    prestamo_id: "P008",
+    usuario_id: prestamoInteresHU8.usuario_id,
+    tipo_abono: "interes",
+    valor: 50000,
+    fecha: ISODate("2026-03-18T11:00:00Z")
+  })
+
+  sesionInteresHU8.commitTransaction()
+  print("Pago de intereses registrado correctamente.")
+} catch (error) {
+  sesionInteresHU8.abortTransaction()
+  print("Pago de intereses cancelado: " + error.message)
+} finally {
+  sesionInteresHU8.endSession()
+}
+
+db.prestamos.findOne(
+  { prestamo_id: "P008" },
+  { _id: 0, prestamo_id: 1, capital_pendiente: 1, interes_pendiente: 1, estado: 1 }
+)
+
+# Historial de pagos de un estudiante:
+
+db.pagos_prestamo.find(
+  { usuario_id: "U008" },
+  { _id: 0, pago_id: 1, prestamo_id: 1, tipo_abono: 1, valor: 1, fecha: 1 }
+)
+
+# Explicación:
+# El abono al capital usa una actualización por etapas (update pipeline):
+# primero resta el abono y después recalcula el interés con la tasa del préstamo.
+# El abono al interés utiliza $inc negativo, condicionado a que exista saldo.
+# En ambos casos la transacción mantiene consistente la deuda y su historial.
+
+# ========================================================
+# HISTORIA DE USUARIO 9
+# ========================================================
+
+# Enunciado:
+# Como sistema quiero distribuir los intereses generados por los préstamos
+# proporcionalmente entre los estudiantes ahorradores para reconocer su
+# participación en el fondo de la cooperativa.
+
+# Ejemplo:
+#
+# Total ahorrado = $27.000.000
+# Intereses generados = $500.000
+#
+# participación = ahorro_estudiante / total_ahorrado
+# interes_recibido = participación * intereses_generados
+
+# --------------------------------------------------------
+# AGREGACIÓN DE DISTRIBUCIÓN
+# --------------------------------------------------------
+
+db.ahorros.aggregate([
+  {
+    $match: {
+      estado: "activo",
+      saldo: { $gt: 0 }
+    }
+  },
+  {
+    $group: {
+      _id: null,
+      total_ahorrado: { $sum: "$saldo" },
+      cuentas: {
+        $push: {
+          ahorro_id: "$ahorro_id",
+          usuario_id: "$usuario_id",
+          saldo: "$saldo"
+        }
+      }
+    }
+  },
+  {
+    $unwind: "$cuentas"
+  },
+  {
+    $project: {
+      _id: 0,
+      ahorro_id: "$cuentas.ahorro_id",
+      usuario_id: "$cuentas.usuario_id",
+      ahorro_estudiante: "$cuentas.saldo",
+      total_ahorrado: 1,
+      intereses_generados: { $literal: 500000 },
+      participacion: {
+        $divide: [
+          "$cuentas.saldo",
+          "$total_ahorrado"
+        ]
+      }
+    }
+  },
+  {
+    $set: {
+      interes_recibido: {
+        $multiply: [
+          "$participacion",
+          "$intereses_generados"
+        ]
+      }
+    }
+  },
+  {
+    $project: {
+      ahorro_id: 1,
+      usuario_id: 1,
+      ahorro_estudiante: 1,
+      total_ahorrado: 1,
+      intereses_generados: 1,
+      participacion: 1,
+      interes_recibido: {
+        $round: ["$interes_recibido", 2]
+      }
+    }
+  }
+])
+
+# Resultado esperado:
+#
+# U001: $2.000.000 -> aproximadamente $37.037,04
+# U002: $3.000.000 -> aproximadamente $55.555,56
+# U003: $5.000.000 -> aproximadamente $92.592,59
+# U004: $1.500.000 -> aproximadamente $27.777,78
+# U005: $2.500.000 -> aproximadamente $46.296,30
+# U006: $1.000.000 -> aproximadamente $18.518,52
+# U007: $3.500.000 -> aproximadamente $64.814,81
+# U008: $4.500.000 -> aproximadamente $83.333,33
+# U009: $1.800.000 -> aproximadamente $33.333,33
+# U010: $2.200.000 -> aproximadamente $40.740,74
+#
+# La suma de los valores redondeados a dos decimales es $500.000.
+
+# --------------------------------------------------------
+# GUARDAR UNA NUEVA DISTRIBUCIÓN
+# --------------------------------------------------------
+
+db.distribucion_intereses.insertMany([
+  {
+    distribucion_id: "DI011",
+    periodo: "2026-04",
+    usuario_id: "U001",
+    ahorro_id: "A001",
+    ahorro_base: 2000000,
+    total_ahorrado: 27000000,
+    intereses_generados: 500000,
+    participacion: 2000000 / 27000000,
+    interes_recibido: 37037.04
+  },
+  {
+    distribucion_id: "DI012",
+    periodo: "2026-04",
+    usuario_id: "U002",
+    ahorro_id: "A002",
+    ahorro_base: 3000000,
+    total_ahorrado: 27000000,
+    intereses_generados: 500000,
+    participacion: 3000000 / 27000000,
+    interes_recibido: 55555.56
+  }
+])
+
+# La agregación anterior es la consulta principal.
+# La colección permite guardar los resultados de una distribución realizada.
+
+# Explicación:
+# $group obtiene el total ahorrado.
+# $divide calcula la participación de cada ahorrador.
+# $multiply calcula el interés recibido.
+# $round presenta el valor monetario con dos decimales.
+
+# ========================================================
+# HISTORIA DE USUARIO 10
+# ========================================================
+
+# Enunciado:
+# Como Rector quiero consultar estadísticas de ahorros, préstamos, pagos e
+# intereses para supervisar el funcionamiento de la cooperativa.
+
+# --------------------------------------------------------
+# 1. CANTIDAD DE ESTUDIANTES
+# --------------------------------------------------------
+
+db.usuarios.aggregate([
+  {
+    $match: {
+      tipo: "estudiante"
+    }
+  },
+  {
+    $group: {
+      _id: null,
+      cantidad_estudiantes: { $sum: 1 }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      cantidad_estudiantes: 1
+    }
+  }
+])
+
+# --------------------------------------------------------
+# 2. TOTAL AHORRADO
+# --------------------------------------------------------
+
+db.ahorros.aggregate([
+  {
+    $match: {
+      estado: "activo"
+    }
+  },
+  {
+    $group: {
+      _id: null,
+      total_ahorrado: { $sum: "$saldo" }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      total_ahorrado: 1
+    }
+  }
+])
+
+# --------------------------------------------------------
+# 3. CANTIDAD Y TOTAL DE PRÉSTAMOS
+# --------------------------------------------------------
+
+db.prestamos.aggregate([
+  {
+    $group: {
+      _id: null,
+      cantidad_prestamos: { $sum: 1 },
+      total_prestado: { $sum: "$capital_inicial" }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      cantidad_prestamos: 1,
+      total_prestado: 1
+    }
+  }
+])
+
+# --------------------------------------------------------
+# 4. CAPITAL E INTERÉS PENDIENTES
+# --------------------------------------------------------
+
+db.prestamos.aggregate([
+  {
+    $match: {
+      estado: "activo"
+    }
+  },
+  {
+    $group: {
+      _id: null,
+      total_capital_pendiente: {
+        $sum: "$capital_pendiente"
+      },
+      total_intereses_pendientes: {
+        $sum: "$interes_pendiente"
+      }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      total_capital_pendiente: 1,
+      total_intereses_pendientes: 1
+    }
+  }
+])
+
+# --------------------------------------------------------
+# 5. TOTAL DE INTERESES GENERADOS
+# --------------------------------------------------------
+
+db.prestamos.aggregate([
+  {
+    $group: {
+      _id: null,
+      total_intereses_generados: {
+        $sum: "$interes_inicial"
+      }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      total_intereses_generados: 1
+    }
+  }
+])
+
+# Para los ocho préstamos iniciales:
+# 50.000 + 100.000 + 150.000 + 250.000 +
+# 75.000 + 25.000 + 40.000 + 150.000
+# = $840.000
+
+# --------------------------------------------------------
+# 6. PRÉSTAMOS ACTIVOS Y PAGADOS
+# --------------------------------------------------------
+
+db.prestamos.aggregate([
+  {
+    $group: {
+      _id: "$estado",
+      cantidad: { $sum: 1 }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      estado: "$_id",
+      cantidad: 1
+    }
+  }
+])
+
+# --------------------------------------------------------
+# 7. ESTUDIANTES CON MAYOR AHORRO
+# --------------------------------------------------------
+
+db.ahorros.aggregate([
+  {
+    $match: {
+      estado: "activo"
+    }
+  },
+  {
+    $lookup: {
+      from: "usuarios",
+      localField: "usuario_id",
+      foreignField: "usuario_id",
+      as: "usuario"
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      usuario_id: 1,
+      nombre: {
+        $arrayElemAt: ["$usuario.nombre", 0]
+      },
+      saldo: 1
+    }
+  },
+  {
+    $sort: {
+      saldo: -1
+    }
+  },
+  {
+    $limit: 5
+  }
+])
+
+# --------------------------------------------------------
+# 8. ESTUDIANTES CON PRÉSTAMOS ACTIVOS
+# --------------------------------------------------------
+
+db.prestamos.aggregate([
+  {
+    $match: {
+      estado: "activo"
+    }
+  },
+  {
+    $lookup: {
+      from: "usuarios",
+      localField: "usuario_id",
+      foreignField: "usuario_id",
+      as: "usuario"
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      prestamo_id: 1,
+      usuario_id: 1,
+      nombre: {
+        $arrayElemAt: ["$usuario.nombre", 0]
+      },
+      capital_pendiente: 1,
+      interes_pendiente: 1
+    }
+  },
+  {
+    $sort: {
+      capital_pendiente: -1
+    }
+  }
+])
+
+# --------------------------------------------------------
+# 9. REPORTE GENERAL EN UNA SOLA AGREGACIÓN
+# --------------------------------------------------------
+
+db.usuarios.aggregate([
+  {
+    $match: {
+      tipo: "estudiante"
+    }
+  },
+  {
+    $facet: {
+      estudiantes: [
+        {
+          $count: "cantidad"
+        }
+      ],
+      ahorros: [
+        {
+          $lookup: {
+            from: "ahorros",
+            localField: "usuario_id",
+            foreignField: "usuario_id",
+            as: "cuenta"
+          }
+        },
+        {
+          $unwind: "$cuenta"
+        },
+        {
+          $group: {
+            _id: null,
+            total_ahorrado: {
+              $sum: "$cuenta.saldo"
+            }
+          }
+        }
+      ],
+      prestamos: [
+        {
+          $lookup: {
+            from: "prestamos",
+            localField: "usuario_id",
+            foreignField: "usuario_id",
+            as: "prestamos"
+          }
+        },
+        {
+          $unwind: {
+            path: "$prestamos",
+            preserveNullAndEmptyArrays: false
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            cantidad_prestamos: { $sum: 1 },
+            total_prestado: {
+              $sum: "$prestamos.capital_inicial"
+            },
+            total_capital_pendiente: {
+              $sum: "$prestamos.capital_pendiente"
+            },
+            total_intereses_pendientes: {
+              $sum: "$prestamos.interes_pendiente"
+            }
+          }
+        }
+      ],
+      pagos: [
+        {
+          $lookup: {
+            from: "pagos_prestamo",
+            localField: "usuario_id",
+            foreignField: "usuario_id",
+            as: "pagos"
+          }
+        },
+        {
+          $unwind: {
+            path: "$pagos",
+            preserveNullAndEmptyArrays: false
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            cantidad_pagos: { $sum: 1 },
+            total_pagado: { $sum: "$pagos.valor" }
+          }
+        }
+      ]
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      cantidad_estudiantes: {
+        $arrayElemAt: ["$estudiantes.cantidad", 0]
+      },
+      total_ahorrado: {
+        $arrayElemAt: ["$ahorros.total_ahorrado", 0]
+      },
+      cantidad_prestamos: {
+        $arrayElemAt: ["$prestamos.cantidad_prestamos", 0]
+      },
+      total_prestado: {
+        $arrayElemAt: ["$prestamos.total_prestado", 0]
+      },
+      total_capital_pendiente: {
+        $arrayElemAt: ["$prestamos.total_capital_pendiente", 0]
+      },
+      total_intereses_pendientes: {
+        $arrayElemAt: ["$prestamos.total_intereses_pendientes", 0]
+      },
+      cantidad_pagos: {
+        $arrayElemAt: ["$pagos.cantidad_pagos", 0]
+      },
+      total_pagado: {
+        $arrayElemAt: ["$pagos.total_pagado", 0]
+      }
+    }
+  }
+])
+
+# --------------------------------------------------------
+# 10. CONSULTA DE ESTADÍSTICAS DE PAGOS POR TIPO
+# --------------------------------------------------------
+
+db.pagos_prestamo.aggregate([
+  {
+    $group: {
+      _id: "$tipo_abono",
+      cantidad_pagos: { $sum: 1 },
+      total: { $sum: "$valor" },
+      promedio_pago: { $avg: "$valor" }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      tipo_abono: "$_id",
+      cantidad_pagos: 1,
+      total: 1,
+      promedio_pago: 1
+    }
+  }
+])
+
+# --------------------------------------------------------
+# 11. TOTAL DE INTERESES DISTRIBUIDOS
+# --------------------------------------------------------
+
+db.distribucion_intereses.aggregate([
+  {
+    $group: {
+      _id: "$periodo",
+      total_intereses_distribuidos: {
+        $sum: "$interes_recibido"
+      },
+      cantidad_ahorradores: {
+        $sum: 1
+      }
+    }
+  },
+  {
+    $sort: {
+      _id: 1
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      periodo: "$_id",
+      cantidad_ahorradores: 1,
+      total_intereses_distribuidos: 1
+    }
+  }
+])
+
+# --------------------------------------------------------
+# JUSTIFICACIÓN DE LA HISTORIA 10
+# --------------------------------------------------------
+
+# $match permite seleccionar los estudiantes o préstamos necesarios.
+# $group permite obtener totales y cantidades.
+# $sum suma valores monetarios.
+# $avg calcula promedios.
+# $lookup relaciona estudiantes con ahorros, préstamos y pagos.
+# $sort ordena los resultados para identificar los mayores ahorradores.
+# $facet permite obtener varios indicadores dentro de una misma consulta.
+
+# ========================================================
+# VALIDACIONES ADICIONALES
+# ========================================================
+
+# --------------------------------------------------------
+# VALIDAR PRÉSTAMOS CON CAPITAL NO POSITIVO
+# --------------------------------------------------------
+
+db.prestamos.find({
+  capital_inicial: { $lte: 0 }
+})
+
+# Debe devolver cero documentos.
+
+# --------------------------------------------------------
+# VALIDAR CAPITAL PENDIENTE NEGATIVO
+# --------------------------------------------------------
+
+db.prestamos.find({
+  capital_pendiente: { $lt: 0 }
+})
+
+# Debe devolver cero documentos.
+
+# --------------------------------------------------------
+# VALIDAR INTERÉS PENDIENTE NEGATIVO
+# --------------------------------------------------------
+
+db.prestamos.find({
+  interes_pendiente: { $lt: 0 }
+})
+
+# Debe devolver cero documentos.
+
+# --------------------------------------------------------
+# VALIDAR PRÉSTAMOS CON FINALIDAD EXISTENTE
+# --------------------------------------------------------
+
+db.prestamos.aggregate([
+  {
+    $lookup: {
+      from: "fines_educativos",
+      localField: "fin_id",
+      foreignField: "fin_id",
+      as: "fin"
+    }
+  },
+  {
+    $match: {
+      "fin.0": { $exists: false }
+    }
+  }
+])
+
+# Si devuelve cero documentos, todos los préstamos tienen una finalidad válida.
+
+# --------------------------------------------------------
+# VALIDAR PRÉSTAMOS DE ESTUDIANTES REGISTRADOS
+# --------------------------------------------------------
+
+db.prestamos.aggregate([
+  {
+    $lookup: {
+      from: "usuarios",
+      localField: "usuario_id",
+      foreignField: "usuario_id",
+      as: "usuario"
+    }
+  },
+  {
+    $match: {
+      "usuario.0": { $exists: false }
+    }
+  }
+])
+
+# Si devuelve cero documentos, todos los préstamos pertenecen a usuarios existentes.
+
+# --------------------------------------------------------
+# VALIDAR CUENTAS CON SALDO NEGATIVO
+# --------------------------------------------------------
+
+db.ahorros.find({
+  saldo: { $lt: 0 }
+})
+
+# Debe devolver cero documentos.
+
+# ========================================================
+# REGLA DEL 5 % - COMPROBACIÓN MATEMÁTICA
+# ========================================================
+
+# $500.000
+# 500.000 * 0.05 = 25.000
+# Total = 525.000
+
+# $1.000.000
+# 1.000.000 * 0.05 = 50.000
+# Total = 1.050.000
+
+# $2.000.000
+# 2.000.000 * 0.05 = 100.000
+# Total = 2.100.000
+
+# $3.000.000
+# 3.000.000 * 0.05 = 150.000
+# Total = 3.150.000
+
+# $5.000.000
+# 5.000.000 * 0.05 = 250.000
+# Total = 5.250.000
+
+# $10.000.000
+# 10.000.000 * 0.05 = 500.000
+# Total = 10.500.000
+
+# ========================================================
+# CONSULTA PARA CALCULAR EL 5 % DE VARIOS VALORES
+# ========================================================
+
+db.prestamos.aggregate([
+  {
+    $project: {
+      _id: 0,
+      prestamo_id: 1,
+      capital_inicial: 1,
+      interes_5_por_ciento: {
+        $multiply: ["$capital_inicial", 0.05]
+      },
+      total: {
+        $add: [
+          "$capital_inicial",
+          {
+            $multiply: ["$capital_inicial", 0.05]
+          }
+        ]
+      }
+    }
+  }
+])
+
+# ========================================================
+# CONSULTAR CUÁNTO DINERO HAY DISPONIBLE EN AHORROS
+# ========================================================
+
+db.ahorros.aggregate([
+  {
+    $match: {
+      estado: "activo"
+    }
+  },
+  {
+    $group: {
+      _id: null,
+      dinero_disponible_en_ahorros: {
+        $sum: "$saldo"
+      }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      dinero_disponible_en_ahorros: 1
+    }
+  }
+])
+
+# Con las cuentas iniciales:
+# dinero disponible = $27.000.000
+
+# ========================================================
+# CONSULTAR HISTORIAL COMPLETO DE PAGOS DE UN ESTUDIANTE
+# ========================================================
+
+db.pagos_prestamo.aggregate([
+  {
+    $match: {
+      usuario_id: "U004"
+    }
+  },
+  {
+    $lookup: {
+      from: "prestamos",
+      localField: "prestamo_id",
+      foreignField: "prestamo_id",
+      as: "prestamo"
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      pago_id: 1,
+      prestamo_id: 1,
+      tipo_abono: 1,
+      valor: 1,
+      fecha: 1,
+      capital_actual: {
+        $arrayElemAt: ["$prestamo.capital_pendiente", 0]
+      },
+      interes_actual: {
+        $arrayElemAt: ["$prestamo.interes_pendiente", 0]
+      }
+    }
+  },
+  {
+    $sort: {
+      fecha: 1
+    }
+  }
+])
+
+# ========================================================
+# CONSULTAR EL PRÉSTAMO ESPECÍFICO DE UN ESTUDIANTE
+# ========================================================
+
+db.prestamos.find(
+  {
+    usuario_id: "U004",
+    prestamo_id: "P004"
+  },
+  {
+    _id: 0
+  }
+)
+
+
+# ========================================================
+# MIEMBROS DEL EQUIPO
+# ========================================================
+
+1. Cristian David Tombe Y.
+
+---
+
+2. Laura Sofia Salazar S.
+
+---
+
+# ========================================================
+# INSTRUCCIONES
+# ========================================================
+
+El proyecto está desarrollado en MongoDB y corresponde a una Cooperativa
+Universitaria de Ahorro y Crédito Educativo.
+
+El proyecto contiene:
+
+- 8 colecciones principales.
+- 10 estudiantes iniciales.
+- 1 rector.
+- 5 funcionarios iniciales.
+- 10 cuentas de ahorro.
+- Movimientos de depósitos y retiros.
+- 9 fines educativos.
+- 8 préstamos iniciales.
+- Historial de pagos.
+- Distribución proporcional de intereses.
+- Exactamente 10 Historias de Usuario.
+- Consultas con insertOne(), insertMany(), find(), updateOne(),
+  aggregate(), $match, $group, $sum, $avg, $lookup, $project,
+  $set, $subtract, $multiply, $divide y $cond.
+- Validaciones para evitar saldos y valores negativos.
+- Reportes administrativos.
+
+
+# ========================================================
+# FIN DEL PROYECTO
+# ========================================================
